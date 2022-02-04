@@ -1,26 +1,76 @@
-import React from 'react';
-import logo from './logo.svg';
+import React, { ReactNode, useMemo } from 'react';
+import { BrowserRouter as Router, Route } from 'react-router-dom'
 import './App.css';
+import { NetlifyGithubLogin } from './NetlifyGithubLogin';
+
+// async function loadGitHubUserEmails(token: string) {
+//   return await fetch("https://api.github.com/user/emails", {
+//     headers: {
+//       Accept: "application/vnd.github.v3+json",
+//       Authorization: `token ${token}`,
+//     },
+//   })
+//     .then((response) => response.json())
+//     .then((response) => JSON.stringify(response));
+// }
+
+const NetlifyLoginWrapper = ({ children }: { children: ReactNode }) => {
+  const githubToken = useMemo(() => {
+    return localStorage.getItem('GITHUB_TOKEN')
+  }, [])
+
+  return githubToken ? <>{children}</> : <NetlifyGithubLogin />
+}
 
 function App() {
+  // const authenticator = useMemo(
+  //   () => new netlify({
+  //     site_id: 'ba38890c-5f4b-4b1f-a311-2975a400303e',
+  //     base_url: 'https://oauth-github.netlify.app/',
+  //   }),
+  //   [],
+  // );
+
+  // const auth = useCallback(() => {
+  //   return authenticator.authenticate({ provider: "github", scope: "user" }, (error,  data) => {
+  //     if (error) {
+  //       console.log(error)
+  //     }
+  //     console.log(data)
+  //   })
+  // }, [])
+
+//   authenticator.authenticate(
+//     // Set the OAuth provider and token scope
+//     // Provider can be "github", "gitlab", or "bitbucket"
+//     // The scopes available depend on your OAuth provider
+//     { provider: "github", scope: "user" },
+//     async (error, data) => {
+//       if (error) {
+//         outputToken.innerText =
+//           "Error Authenticating with GitHub: " + error;
+//       } else {
+//         outputToken.innerText =
+//           "Authenticated with GitHub. Access Token: " +
+//           data.token;
+//         outputEmail.innerText = await loadGitHubUserEmails(
+//           data.token
+//         );
+//       }
+//     }
+//   );
+// })
+
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      <Router>
+        <NetlifyLoginWrapper>
+          <Route exact path="/" render={() => <h1>Root Page</h1>} />
+          <Route exact path="/secondary" render={() => <h1>Secondary Page</h1>}/>
+        </NetlifyLoginWrapper>
+      </Router>
     </div>
-  );
+  )
 }
 
 export default App;
