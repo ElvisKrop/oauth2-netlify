@@ -19,8 +19,8 @@ const authWithGitHub = async () =>
     )
   })
 
-const loadGitHubUserEmails = async (token: string) =>
-  await fetch("https://api.github.com/user/emails", {
+const loadGitHubUser = async (token: string) =>
+  await fetch("https://api.github.com/user", {
     headers: {
       Accept: "application/vnd.github.v3+json",
       Authorization: `token ${token}`,
@@ -38,8 +38,8 @@ export const NetlifyGithubLogin = () => {
       console.log({ data })
       localStorage.setItem('GITHUB_TOKEN', data.token)
 
-      const email = await loadGitHubUserEmails(data.token)
-      console.log(email)
+      const userProfile = await loadGitHubUser(data.token)
+      console.log(userProfile)
     } catch (error) {
       console.log('Oh no', error)
       setError({ error })
