@@ -1,12 +1,13 @@
-import Authenticator from 'netlify-auth-providers';
 import netlify from 'netlify-auth-providers';
-import { useMemo, useState } from 'react';
+import { useState } from 'react';
 import { Redirect, Route } from 'react-router-dom';
 import { GraphQLClient } from 'graphql-request'
 
-async function authWithGitHub(authenticator: Authenticator) {
+async function authWithGitHub() {
   return new Promise((resolve, reject) => {
-    console.log({ authenticator })
+    const authenticator = new netlify({
+      site_id: 'ba38890c-5f4b-4b1f-a311-2975a400303e',
+    })
     authenticator.authenticate(
       {provider: 'github', scope: 'public_repo,read:org,read:user'},
       function(err, data) {
@@ -28,16 +29,8 @@ export const NetlifyGithubLogin = () => {
   const [error, setError] = useState<null | any>(null)
   const [client, setClient] = useState(null)
 
-  const authenticator = useMemo(
-    () => new netlify({
-      site_id: 'ba38890c-5f4b-4b1f-a311-2975a400303e',
-      base_url: 'https://oauth-github.netlify.app/',
-    }),
-    [],
-  );
-
   const handleLoginClick = async () => {
-    const data = await authWithGitHub(authenticator).catch(error => {
+    const data = await authWithGitHub().catch(error => {
       console.log('Oh no', error)
       setError({ error })
     })
