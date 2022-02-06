@@ -1,7 +1,7 @@
-import React, { ReactNode, useMemo } from 'react';
-import { BrowserRouter as Router, Route } from 'react-router-dom'
+import React from 'react';
+import { BrowserRouter as Router, Redirect, Route } from 'react-router-dom'
 import './App.css';
-import { NetlifyGithubLogin } from './NetlifyGithubLogin';
+import { NetlifyLoginWrapper } from './NetlifyLoginWrapper';
 
 // async function loadGitHubUserEmails(token: string) {
 //   return await fetch("https://api.github.com/user/emails", {
@@ -13,14 +13,6 @@ import { NetlifyGithubLogin } from './NetlifyGithubLogin';
 //     .then((response) => response.json())
 //     .then((response) => JSON.stringify(response));
 // }
-
-const NetlifyLoginWrapper = ({ children }: { children: ReactNode }) => {
-  const githubToken = useMemo(() => {
-    return localStorage.getItem('GITHUB_TOKEN')
-  }, [])
-
-  return githubToken ? <>{children}</> : <NetlifyGithubLogin />
-}
 
 function App() {
   // const authenticator = useMemo(
@@ -65,8 +57,9 @@ function App() {
     <div className="App">
       <Router>
         <NetlifyLoginWrapper>
-          <Route exact path="/" render={() => <h1>Root Page</h1>} />
+          <Route exact path="/home" render={() => <h1>Root Page</h1>} />
           <Route exact path="/secondary" render={() => <h1>Secondary Page</h1>}/>
+          <Route path="*" render={() => <Redirect to="/home" />} />
         </NetlifyLoginWrapper>
       </Router>
     </div>
