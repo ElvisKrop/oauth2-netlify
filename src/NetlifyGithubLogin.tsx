@@ -7,8 +7,8 @@ interface GithubOAuthResponse {
   token: string
 }
 
-async function authWithGitHub() {
-  return new Promise<GithubOAuthResponse>((resolve, reject) => {
+const authWithGitHub = async () =>
+  new Promise<GithubOAuthResponse>((resolve, reject) => {
     const authenticator = new netlify({
       site_id: 'ba38890c-5f4b-4b1f-a311-2975a400303e',
     })
@@ -18,10 +18,9 @@ async function authWithGitHub() {
       (err, data) => err ? reject(err) : resolve(data),
     )
   })
-}
 
-async function loadGitHubUserEmails(token: string) {
-  return await fetch("https://api.github.com/user/emails", {
+const loadGitHubUserEmails = async (token: string) =>
+  await fetch("https://api.github.com/user/emails", {
     headers: {
       Accept: "application/vnd.github.v3+json",
       Authorization: `token ${token}`,
@@ -29,7 +28,6 @@ async function loadGitHubUserEmails(token: string) {
   })
     .then((response) => response.json())
     .then((response) => JSON.stringify(response));
-}
 
 export const NetlifyGithubLogin = () => {
   const [error, setError] = useState<null | any>(null)
