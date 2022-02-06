@@ -1,7 +1,6 @@
 import netlify from 'netlify-auth-providers';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { Redirect, Route } from 'react-router-dom';
-import { GraphQLClient } from 'graphql-request'
 
 interface GithubOAuthResponse {
   provider: "github" | "gitlab" | "bitbucket"
@@ -21,11 +20,6 @@ async function authWithGitHub() {
   })
 }
 
-function getClient(token: string): GraphQLClient {
-  const headers = { Authorization: `bearer ${token}` }
-  return new GraphQLClient('https://api.github.com/graphql', { headers })
-}
-
 async function loadGitHubUserEmails(token: string) {
   return await fetch("https://api.github.com/user/emails", {
     headers: {
@@ -39,17 +33,6 @@ async function loadGitHubUserEmails(token: string) {
 
 export const NetlifyGithubLogin = () => {
   const [error, setError] = useState<null | any>(null)
-  const [client, setClient] = useState<null | GraphQLClient>(null)
-
-  useEffect(() => {
-    if (!client) {
-      const currentGithubToken = localStorage.getItem('GITHUB_TOKEN')
-      if (currentGithubToken) {
-        const newClient = getClient(currentGithubToken)
-        setClient(newClient)
-      }
-    }
-  }, [client])
 
   const handleLoginClick = async () => {
     try {
@@ -59,18 +42,12 @@ export const NetlifyGithubLogin = () => {
 
       const email = await loadGitHubUserEmails(data.token)
       console.log(email)
-      const newClient = getClient(data.token)
-      console.log(newClient)
-
-      setClient(newClient)
     } catch (error) {
       console.log('Oh no', error)
       setError({ error })
     }
   }
 
-  // if (client) return <Redirect to="/" />
-  // else if (error) return (
   if (error) return (
     <div>
       Oh no! Error! <pre>{JSON.stringify(error, null, 2)}</pre>
