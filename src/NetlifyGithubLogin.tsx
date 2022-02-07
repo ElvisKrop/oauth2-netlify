@@ -56,13 +56,15 @@ export const NetlifyGithubLogin = ({ netlifyApiId }: { netlifyApiId: string }) =
   )
   else return (
       <>
-        <Route path="/login" render={() => (
+        <Route exact path="/login">
           <div>
             You have no client!
             <button onClick={handleLoginClick}>Sign In Here!</button>
           </div>
-        )} />
-        <Route component={() => <Redirect to="/login" />} />
+        </Route>
+        <Route path="*">
+          <Redirect to="/login" />
+        </Route>
       </>
     )
 }
