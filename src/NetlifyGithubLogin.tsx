@@ -62,7 +62,7 @@ export const NetlifyGithubLogin = ({ netlifyApiId }: { netlifyApiId: string }) =
             <button onClick={handleLoginClick}>Sign In Here!</button>
           </div>
         )} />
-        <Route render={() => <Redirect to="/login" />} />
+        <Route component={() => <Redirect to="/login" />} />
       </>
     )
 }
