@@ -7,14 +7,14 @@ interface GithubOAuthResponse {
   token: string
 }
 
-const authWithGitHub = async () =>
+const authWithGitHub = async (netlifyApiId: string) =>
   new Promise<GithubOAuthResponse>((resolve, reject) => {
     const authenticator = new netlify({
-      site_id: 'ba38890c-5f4b-4b1f-a311-2975a400303e',
+      site_id: netlifyApiId,
     })
 
     authenticator.authenticate(
-      {provider: 'github', scope: 'public_repo,read:org,read:user'},
+      { provider: 'github', scope: 'read:user' },
       (err, data) => err ? reject(err) : resolve(data),
     )
   })
@@ -29,14 +29,14 @@ const loadGitHubUser = async (token: string) =>
     .then((response) => response.json());
     // .then((response) => JSON.stringify(response));
 
-export const NetlifyGithubLogin = () => {
+export const NetlifyGithubLogin = ({ netlifyApiId }: { netlifyApiId: string }) => {
   const [error, setError] = useState<null | any>(null)
   const ENV = useMemo(() => process.env, [])
 
   const handleLoginClick = async () => {
     try {
 
-      const data = await authWithGitHub()
+      const data = await authWithGitHub(netlifyApiId)
       console.log({ data })
       localStorage.setItem('GITHUB_TOKEN', data.token)
 
