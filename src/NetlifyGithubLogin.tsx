@@ -14,7 +14,7 @@ const authWithGitHub = async (netlifyApiId: string) =>
     })
 
     authenticator.authenticate(
-      { provider: 'github', scope: 'read:user' },
+      { provider: 'github' },
       (err, data) => err ? reject(err) : resolve(data),
     )
   })
@@ -58,7 +58,6 @@ export const NetlifyGithubLogin = ({ netlifyApiId }: { netlifyApiId: string }) =
       <>
         <Route exact path="/login">
           <div>
-            You have no client!
             <button onClick={handleLoginClick}>Sign In Here!</button>
           </div>
         </Route>
