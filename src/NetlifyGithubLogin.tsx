@@ -1,5 +1,5 @@
 import netlify from 'netlify-auth-providers';
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { Redirect, Route } from 'react-router-dom';
 
 interface GithubOAuthResponse {
@@ -26,20 +26,23 @@ const loadGitHubUser = async (token: string) =>
       Authorization: `token ${token}`,
     },
   })
-    .then((response) => response.json())
-    .then((response) => JSON.stringify(response));
+    .then((response) => response.json());
+    // .then((response) => JSON.stringify(response));
 
 export const NetlifyGithubLogin = () => {
   const [error, setError] = useState<null | any>(null)
+  const ENV = useMemo(() => process.env, [])
 
   const handleLoginClick = async () => {
     try {
+
       const data = await authWithGitHub()
       console.log({ data })
       localStorage.setItem('GITHUB_TOKEN', data.token)
 
       const userProfile = await loadGitHubUser(data.token)
       console.log(userProfile)
+      console.log({ ENV })
     } catch (error) {
       console.log('Oh no', error)
       setError({ error })
@@ -59,7 +62,7 @@ export const NetlifyGithubLogin = () => {
             <button onClick={handleLoginClick}>Sign In Here!</button>
           </div>
         )} />
-        <Route path="*" render={() => <Redirect to="/login" />} />
+        <Route render={() => <Redirect to="/login" />} />
       </>
     )
 }

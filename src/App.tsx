@@ -9,7 +9,7 @@ const App = () => (
         <NetlifyLoginWrapper>
           <Route exact path="/home" render={() => <h1>Root Page</h1>} />
           <Route exact path="/secondary" render={() => <h1>Secondary Page</h1>}/>
-          <Route path="*" render={() => <Redirect to="/home" />} />
+          <Route render={() => <Redirect to="/home" />} />
         </NetlifyLoginWrapper>
       </Router>
     </div>
