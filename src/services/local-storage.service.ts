@@ -8,10 +8,13 @@ export abstract class LocalStorageService<TValue> {
 
   protected getItem = () => {
     const value = localStorage.getItem(this.key)
-    if (!value) throw new Error('No value in the local storage')
+    if (!value) throw new Error('No such key in the local storage or value is empty')
 
     const decodedValue = this.decode(value)
-    if (!decodedValue) throw new Error('Set any value at first')
+    if (!decodedValue) {
+      this.removeItem()
+      throw new Error('Set any value at first')
+    }
 
     if (!this.validate(decodedValue)) {
       this.removeItem()
@@ -26,6 +29,14 @@ export abstract class LocalStorageService<TValue> {
       localStorage.setItem(this.key, value)
     } else {
       localStorage.setItem(this.key, this.encode(value))
+    }
+  }
+
+  protected isStoredValueValid = () => {
+    try {
+      return !!this.getItem()
+    } catch {
+      return false
     }
   }
 

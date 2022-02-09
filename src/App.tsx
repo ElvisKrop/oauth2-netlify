@@ -4,7 +4,7 @@ import { NetlifyLoginWrapper } from './NetlifyLoginWrapper'
 
 const App = () => (
   <Router>
-    <NetlifyLoginWrapper>
+    <NetlifyLoginWrapper apiId={process.env?.REACT_APP_NETLIFY_API_ID}>
       <Route exact path="/home">
         <h1>Root Page</h1>
         <Link to="/secondary">go to secondary page</Link>

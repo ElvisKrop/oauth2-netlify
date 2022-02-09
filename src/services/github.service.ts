@@ -33,6 +33,8 @@ class GithubLSService extends LocalStorageService<GithubStorageData> {
 
   setToken = (token: string): void => this.setItem({ token })
 
+  isStoredTokenValid = () => this.isStoredValueValid()
+
   removeStoredToken = (): void => this.removeItem()
 }
 
