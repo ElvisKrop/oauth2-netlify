@@ -1,9 +1,11 @@
 import { Dispatch, SetStateAction, useMemo, useState } from 'react'
+import { useHistory } from 'react-router';
 import { Redirect, Route } from 'react-router-dom'
 import { GithubService, GithubUserProfile } from './services/github.service'
 import { NetlifyService } from './services/netlify.service'
 
 export const NetlifyGithubLogin = ({ netlifyApiId, githubService, setUserProfile }: { netlifyApiId: string, githubService: GithubService, setUserProfile:  Dispatch<SetStateAction<GithubUserProfile | null>> }) => {
+  const history = useHistory()
   const [error, setError] = useState<null | any>(null)
   const netlifyService = useMemo(() => NetlifyService.getInstance(netlifyApiId), [netlifyApiId])
 
@@ -15,6 +17,7 @@ export const NetlifyGithubLogin = ({ netlifyApiId, githubService, setUserProfile
       const profile = await githubService.getUserProfile()
       setUserProfile(profile)
       console.log(profile)
+      history.push('/')
     } catch (error) {
       console.log('Oh no', error)
       setError({ error })
