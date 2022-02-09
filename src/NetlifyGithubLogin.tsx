@@ -26,6 +26,7 @@ export const NetlifyGithubLogin = ({
       setUserProfile(newProfile)
       console.log({ newProfile })
     } catch (err) {
+      githubService.storage.removeStoredToken()
       setUserProfile(null)
       setError(err)
     }
