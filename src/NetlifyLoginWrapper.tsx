@@ -20,13 +20,13 @@ export const NetlifyLoginWrapper = ({ children }: { children: ReactNode }) => {
     })()
   }, [githubService])
 
-  return userProfile !== null || !apiId ? (
-    <>{children}</>
-  ) : (
+  return userProfile === null && apiId ? (
     <NetlifyGithubLogin
       netlifyApiId={apiId}
       setUserProfile={setUserProfile}
       githubService={githubService}
     />
+  ) : (
+    <>{children}</>
   )
 }
