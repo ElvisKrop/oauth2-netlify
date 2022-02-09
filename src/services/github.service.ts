@@ -29,12 +29,11 @@ class GithubLSService extends LocalStorageService<GithubStorageData> {
   private static encode = (data: Partial<GithubStorageData>) =>
     JSON.stringify({ version: pkg.version, ...data })
 
-  getToken = (): string => {
-    const storedValue = this.getItem()
-    return storedValue.token
-  }
+  getToken = (): string => this.getItem().token
 
-  removeStoredToken = () => this.removeItem()
+  setToken = (token: string): void => this.setItem({ token })
+
+  removeStoredToken = (): void => this.removeItem()
 }
 
 export class GithubService extends HttpService {

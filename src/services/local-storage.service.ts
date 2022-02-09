@@ -6,7 +6,7 @@ export abstract class LocalStorageService<TValue> {
     private decode: (str: string) => TValue | null = JSON.parse,
   ) {}
 
-  getItem = () => {
+  protected getItem = () => {
     const value = localStorage.getItem(this.key)
     if (!value) throw new Error('No value in the local storage')
 
@@ -21,7 +21,7 @@ export abstract class LocalStorageService<TValue> {
     return decodedValue
   }
 
-  setItem = (value: Partial<TValue>) => {
+  protected setItem = (value: Partial<TValue>) => {
     if (typeof value === 'string') {
       localStorage.setItem(this.key, value)
     } else {

@@ -20,7 +20,7 @@ export const NetlifyGithubLogin = ({
   const handleLoginClick = useCallback(async () => {
     try {
       const token = await netlifyService.auth('github')
-      githubService.storage.setItem({ token })
+      githubService.storage.setToken(token)
 
       const newProfile = await githubService.getUserProfile()
       setUserProfile(newProfile)
