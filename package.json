@@ -26,7 +26,8 @@
     "build": "react-scripts build && echo '/* /index.html 200' | cat >build/_redirects",
     "test": "react-scripts test",
     "lint": "eslint --max-warnings 0 src --ext .js,.ts,.tsx",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "prepare": "husky install"
   },
   "browserslist": {
     "production": [
