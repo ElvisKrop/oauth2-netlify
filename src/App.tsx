@@ -11,6 +11,7 @@ const App = () => (
       </Route>
       <Route exact path="/secondary">
         <h1>Secondary Page</h1>
+        <Link to="/home">go to home page</Link>
       </Route>
       <Route path="*">
         <Redirect to="/home" />
