@@ -1,7 +1,7 @@
 import React, { ReactNode, useCallback, useEffect, useMemo, useState } from 'react'
 import { GithubService, GithubUserProfile } from './services/github.service'
 import { Redirect, Route } from 'react-router-dom'
-import { NetlifyService } from './services/netlify.service'
+import { NetlifyOAuthProvider, NetlifyService } from './services/netlify.service'
 
 export const NetlifyLoginWrapper = ({
   apiId,
@@ -10,13 +10,14 @@ export const NetlifyLoginWrapper = ({
   apiId?: string
   children: ReactNode | ReactNode[]
 }) => {
+  const [provider, setProvider] = useState(NetlifyOAuthProvider.github)
   const netlifyService = useMemo(() => (apiId ? NetlifyService.getInstance(apiId) : null), [apiId])
   const [userProfile, setUserProfile] = useState<null | undefined | GithubUserProfile>(undefined)
   const githubService = useMemo(() => new GithubService(), [])
 
   const resetProfile = useCallback(
     (error?: unknown) => {
-      console.error(error)
+      if (error) console.error(error)
       githubService.storage.removeStoredToken()
       setUserProfile(null)
     },
@@ -34,7 +35,7 @@ export const NetlifyLoginWrapper = ({
   const handleLoginClick = useCallback(async () => {
     if (!netlifyService) return
     try {
-      const token = await netlifyService.auth('github')
+      const token = await netlifyService.auth(provider)
       githubService.storage.setToken(token)
 
       const newProfile = await githubService.getUserProfile()
@@ -42,7 +43,7 @@ export const NetlifyLoginWrapper = ({
     } catch (err) {
       resetProfile(err)
     }
-  }, [netlifyService, githubService, resetProfile])
+  }, [netlifyService, provider, githubService, resetProfile])
 
   return userProfile === null && apiId ? (
     <>
@@ -54,8 +55,28 @@ export const NetlifyLoginWrapper = ({
             display: 'flex',
             justifyContent: 'center',
             alignItems: 'center',
+            flexDirection: 'column',
           }}
         >
+          <div>
+            {[
+              NetlifyOAuthProvider.github,
+              NetlifyOAuthProvider.gitlab,
+              NetlifyOAuthProvider.bitbucket,
+            ].map((currentProvider) => (
+              <div key={currentProvider}>
+                <input
+                  type="radio"
+                  name="provider"
+                  id={currentProvider}
+                  value={currentProvider}
+                  checked={provider === currentProvider}
+                  onChange={() => setProvider(currentProvider)}
+                />
+                <label htmlFor={currentProvider}>{currentProvider}</label>
+              </div>
+            ))}
+          </div>
           <button onClick={handleLoginClick}>Sign In Here!</button>
         </div>
       </Route>
