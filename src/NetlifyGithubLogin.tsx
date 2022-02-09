@@ -1,48 +1,20 @@
-import netlify from 'netlify-auth-providers';
-import { useMemo, useState } from 'react';
-import { Redirect, Route } from 'react-router-dom';
+import { Dispatch, SetStateAction, useMemo, useState } from 'react'
+import { Redirect, Route } from 'react-router-dom'
+import { GithubService, GithubUserProfile } from './services/github.service'
+import { NetlifyService } from './services/netlify.service'
 
-interface GithubOAuthResponse {
-  provider: "github" | "gitlab" | "bitbucket"
-  token: string
-}
-
-const authWithGitHub = async (netlifyApiId: string) =>
-  new Promise<GithubOAuthResponse>((resolve, reject) => {
-    const authenticator = new netlify({
-      site_id: netlifyApiId,
-    })
-
-    authenticator.authenticate(
-      { provider: 'github' },
-      (err, data) => err ? reject(err) : resolve(data),
-    )
-  })
-
-const loadGitHubUser = async (token: string) =>
-  await fetch("https://api.github.com/user", {
-    headers: {
-      Accept: "application/vnd.github.v3+json",
-      Authorization: `token ${token}`,
-    },
-  })
-    .then((response) => response.json());
-    // .then((response) => JSON.stringify(response));
-
-export const NetlifyGithubLogin = ({ netlifyApiId }: { netlifyApiId: string }) => {
+export const NetlifyGithubLogin = ({ netlifyApiId, githubService, setUserProfile }: { netlifyApiId: string, githubService: GithubService, setUserProfile:  Dispatch<SetStateAction<GithubUserProfile | null>> }) => {
   const [error, setError] = useState<null | any>(null)
-  const ENV = useMemo(() => process.env, [])
+  const netlifyService = useMemo(() => NetlifyService.getInstance(netlifyApiId), [netlifyApiId])
 
   const handleLoginClick = async () => {
     try {
+      const token = await netlifyService.auth('github')
+      githubService.storage.setItem({ token })
 
-      const data = await authWithGitHub(netlifyApiId)
-      console.log({ data })
-      localStorage.setItem('GITHUB_TOKEN', data.token)
-
-      const userProfile = await loadGitHubUser(data.token)
-      console.log(userProfile)
-      console.log({ ENV })
+      const profile = await githubService.getUserProfile()
+      setUserProfile(profile)
+      console.log(profile)
     } catch (error) {
       console.log('Oh no', error)
       setError({ error })
@@ -57,7 +29,7 @@ export const NetlifyGithubLogin = ({ netlifyApiId }: { netlifyApiId: string }) =
   else return (
       <>
         <Route exact path="/login">
-          <div>
+          <div style={{ minHeight: '100vh', width: '100%', display: 'flex', justifyContent: 'center', alignItems: 'center'}}>
             <button onClick={handleLoginClick}>Sign In Here!</button>
           </div>
         </Route>
