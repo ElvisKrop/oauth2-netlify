@@ -6,19 +6,10 @@ export abstract class LocalStorageService<TValue> {
     private decode: (str: string) => TValue | null = JSON.parse,
   ) {}
 
-
-  protected checkStored = () => {
-    const length = localStorage.length
-    const keyExists = Array(length).some((_, index) => localStorage.key(index) === this.key)
-    const value = this.getItem()
-    return keyExists && value && this.validate(value)
-  }
-
   getItem = () => {
-    const length = localStorage.length
-    const keyExists = Array(length).some((_, index) => localStorage.key(index) === this.key)
-    if (!keyExists) throw new Error('No such key in the storage')
-
+    // const length = localStorage.length
+    // const keyExists = Array(length).some((_, index) => localStorage.key(index) === this.key)
+    // if (!keyExists) throw new Error('No such key in the storage')
     const value = localStorage.getItem(this.key)
     if (!value) throw new Error('No value in the local storage')
 
