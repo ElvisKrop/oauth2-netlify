@@ -17,14 +17,15 @@ export const NetlifyLoginWrapper = ({ children }: { children: ReactNode }) => {
       try {
         const profile = await githubService.getUserProfile()
         setUserProfile(profile)
-        history.push('/')
-      } catch (err) {
-        console.error(err)
       } finally {
         setLoading(false)
       }
     })()
-  }, [history, githubService])
+  }, [githubService])
+
+  useEffect(() => {
+    if (!!userProfile?.login) history.push('/home')
+  }, [userProfile?.login, history])
 
   if (loading) return <h1>Wait a little bit, we are checking your profile...</h1>
 
