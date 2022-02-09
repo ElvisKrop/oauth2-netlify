@@ -21,10 +21,8 @@ export class NetlifyService extends netlify {
 
   auth = (provider: 'github' | 'bitbucket' | 'gitlab', scope?: string): Promise<string> =>
     new Promise((resolve, reject) =>
-      this.authenticate(
-        { provider, scope },
-        (error, data: GithubOAuthResponse) =>
-          !!error ? reject(error) : resolve(data.token)
+      this.authenticate({ provider, scope }, (error, data: GithubOAuthResponse) =>
+        error ? reject(error) : resolve(data.token),
       ),
     )
 }

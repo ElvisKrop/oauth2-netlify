@@ -7,9 +7,6 @@ export abstract class LocalStorageService<TValue> {
   ) {}
 
   getItem = () => {
-    // const length = localStorage.length
-    // const keyExists = Array(length).some((_, index) => localStorage.key(index) === this.key)
-    // if (!keyExists) throw new Error('No such key in the storage')
     const value = localStorage.getItem(this.key)
     if (!value) throw new Error('No value in the local storage')
 

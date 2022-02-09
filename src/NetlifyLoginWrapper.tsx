@@ -1,6 +1,6 @@
-import React, { ReactNode, useEffect, useMemo, useState } from 'react';
-import { NetlifyGithubLogin } from './NetlifyGithubLogin';
-import { GithubService, GithubUserProfile } from './services/github.service';
+import React, { ReactNode, useEffect, useMemo, useState } from 'react'
+import { NetlifyGithubLogin } from './NetlifyGithubLogin'
+import { GithubService, GithubUserProfile } from './services/github.service'
 
 const apiId = process.env.REACT_APP_NETLIFY_API_ID
 
@@ -23,5 +23,13 @@ export const NetlifyLoginWrapper = ({ children }: { children: ReactNode }) => {
     })()
   }, [githubService])
 
-  return userProfile === undefined || !apiId ? <>{children}</> : <NetlifyGithubLogin netlifyApiId={apiId} setUserProfile={setUserProfile} githubService={githubService} />
+  return userProfile === undefined || !apiId ? (
+    <>{children}</>
+  ) : (
+    <NetlifyGithubLogin
+      netlifyApiId={apiId}
+      setUserProfile={setUserProfile}
+      githubService={githubService}
+    />
+  )
 }
