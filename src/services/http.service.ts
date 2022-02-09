@@ -1,9 +1,17 @@
 export abstract class HttpService {
-  protected constructor(private baseURL: string) {
+  protected constructor(private baseURL: string, private defaultHeaders: HeadersInit = {}) {
   }
 
-  private request = async (endpoint: string, options: RequestInit) => {
-    const response = await fetch(`${this.baseURL}${endpoint}`, options)
+  private request = async <TResponse>(endpoint: string, { headers = {}, ...restOptions }: RequestInit): Promise<TResponse> => {
+    const response = await fetch(
+      `${this.baseURL}${endpoint}`,
+      {
+        headers: {
+          ...this.defaultHeaders,
+          ...headers,
+        },
+        ...restOptions,
+      })
 
     let json
 
@@ -19,11 +27,11 @@ export abstract class HttpService {
     throw new Error(response.statusText)
   }
 
-  protected get = async (endpoint: string, options: RequestInit) => this.request(endpoint, { ...options, method: 'GET' })
+  protected get = async <TResponse>(endpoint: string, options: RequestInit) => this.request<TResponse>(endpoint, { ...options, method: 'GET' })
 
-  protected post = async (endpoint: string, options: RequestInit) => this.request(endpoint, { ...options, method: 'POST' })
+  protected post = async <TResponse>(endpoint: string, options: RequestInit) => this.request<TResponse>(endpoint, { ...options, method: 'POST' })
 
-  protected patch = async (endpoint: string, options: RequestInit) => this.request(endpoint, { ...options, method: 'PATCH' })
+  protected patch = async <TResponse>(endpoint: string, options: RequestInit) => this.request<TResponse>(endpoint, { ...options, method: 'PATCH' })
 
-  protected delete = async (endpoint: string, options: RequestInit) => this.request(endpoint, { ...options, method: 'DELETE' })
+  protected delete = async <TResponse>(endpoint: string, options: RequestInit) => this.request<TResponse>(endpoint, { ...options, method: 'DELETE' })
 }
