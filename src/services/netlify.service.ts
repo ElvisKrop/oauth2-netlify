@@ -43,10 +43,10 @@ const PROVIDERS: Record<NetlifyOAuthProvider, WindowParams> = {
     width: 640,
     height: 500,
   },
-  // email: {
-  //   width: 500,
-  //   height: 400,
-  // },
+  email: {
+    width: 500,
+    height: 400,
+  },
 }
 
 export class NetlifyService {

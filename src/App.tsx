@@ -12,6 +12,12 @@ enum OwnerUsername {
 }
 
 const App = () => {
+  const acceptedProviders = (process.env?.REACT_APP_ACCEPTED_PROVIDERS?.trim()
+    ?.toLowerCase()
+    .split(',')
+    .filter((provider) => allProviders.includes(provider as NetlifyOAuthProvider)) ||
+    []) as NetlifyOAuthProvider[]
+
   const handleLogin = useCallback((provider: NetlifyOAuthProvider, profile: UserProfile) => {
     console.log(provider, profile)
     switch (provider) {
@@ -36,7 +42,7 @@ const App = () => {
     <Router>
       <NetlifyOAuthWrapper
         handleLogin={handleLogin}
-        acceptedProviders={allProviders}
+        acceptedProviders={acceptedProviders}
         apiId={process.env?.REACT_APP_NETLIFY_API_ID}
       >
         <Route exact path="/home">
