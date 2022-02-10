@@ -3,8 +3,9 @@ import { GithubService } from './services/github.service'
 import { Redirect, Route } from 'react-router-dom'
 import { NetlifyService } from './services/netlify.service'
 import { NetlifyOAuthProvider } from './enums'
-import { GithubUserProfile, NetlifyOAuthWrapperProps, UserProfile } from './types'
+import { NetlifyOAuthWrapperProps, UserProfile } from './types'
 import { allProviders } from './constants'
+import { GitlabService } from './services/gitlab.service'
 
 const defaultLoginHandler = (_: NetlifyOAuthProvider, userProfile: UserProfile) =>
   new Promise<void>((resolve, reject) => (userProfile ? resolve() : reject('No profile')))
@@ -17,8 +18,9 @@ const NetlifyOAuthWrapper = ({
 }: NetlifyOAuthWrapperProps) => {
   const [provider, setProvider] = useState(allProviders[0])
   const netlifyService = useMemo(() => (apiId ? NetlifyService.getInstance(apiId) : null), [apiId])
-  const [userProfile, setUserProfile] = useState<null | undefined | GithubUserProfile>(undefined)
+  const [userProfile, setUserProfile] = useState<null | undefined | UserProfile>(undefined)
   const githubService = useMemo(() => new GithubService(), [])
+  const gitlabService = useMemo(() => new GitlabService(), [])
 
   const resetProfile = useCallback(
     (error?: unknown) => {
@@ -51,6 +53,8 @@ const NetlifyOAuthWrapper = ({
           newProfile = await githubService.getUserProfile()
           break
         case NetlifyOAuthProvider.gitlab:
+          gitlabService.storage.setToken(token)
+          newProfile = await gitlabService.getUserProfile()
           console.log(token)
           break
         case NetlifyOAuthProvider.bitbucket:
@@ -63,7 +67,7 @@ const NetlifyOAuthWrapper = ({
     } catch (err) {
       resetProfile(err)
     }
-  }, [netlifyService, provider, githubService, resetProfile, handleLogin])
+  }, [netlifyService, provider, handleLogin, githubService, gitlabService, resetProfile])
 
   return userProfile === null && apiId ? (
     <>

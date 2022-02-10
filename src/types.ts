@@ -6,9 +6,15 @@ export interface NetlifyOAuthResponse {
   token: string
 }
 
-export interface GithubStorageData {
+export interface OAuthStorageData {
   token: string
   version: string
+}
+
+// TODO: list all available properties
+export interface GitlabUserProfile {
+  // eslint-disable-next-line
+  [key: string]: any
 }
 
 export interface GithubUserProfile {
@@ -43,7 +49,7 @@ export interface GithubUserProfile {
 }
 
 // eslint-disable-next-line
-export type UserProfile = GithubUserProfile | any
+export type UserProfile = GithubUserProfile | GitlabUserProfile | any
 
 export interface NetlifyOAuthWrapperProps {
   apiId?: string
