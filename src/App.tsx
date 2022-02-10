@@ -1,10 +1,10 @@
 import React from 'react'
 import { BrowserRouter as Router, Link, Redirect, Route } from 'react-router-dom'
-import { NetlifyLoginWrapper } from './NetlifyLoginWrapper'
+import NetlifyOAuthWrapper from './NetlifyOAuthWrapper'
 
 const App = () => (
   <Router>
-    <NetlifyLoginWrapper apiId={process.env?.REACT_APP_NETLIFY_API_ID}>
+    <NetlifyOAuthWrapper apiId={process.env?.REACT_APP_NETLIFY_API_ID}>
       <Route exact path="/home">
         <h1>Root Page</h1>
         <Link to="/secondary">go to secondary page</Link>
@@ -16,7 +16,7 @@ const App = () => (
       <Route path="*">
         <Redirect to="/home" />
       </Route>
-    </NetlifyLoginWrapper>
+    </NetlifyOAuthWrapper>
   </Router>
 )
 

@@ -3,14 +3,24 @@ import { GithubService, GithubUserProfile } from './services/github.service'
 import { Redirect, Route } from 'react-router-dom'
 import { NetlifyOAuthProvider, NetlifyService } from './services/netlify.service'
 
-export const NetlifyLoginWrapper = ({
-  apiId,
-  children,
-}: {
+const allProviders = [
+  NetlifyOAuthProvider.github,
+  NetlifyOAuthProvider.gitlab,
+  NetlifyOAuthProvider.bitbucket,
+]
+
+interface NetlifyOAuthWrapperProps {
   apiId?: string
+  acceptedProviders?: NetlifyOAuthProvider[]
   children: ReactNode | ReactNode[]
-}) => {
-  const [provider, setProvider] = useState(NetlifyOAuthProvider.github)
+}
+
+const NetlifyOAuthWrapper = ({
+  apiId,
+  acceptedProviders = allProviders,
+  children,
+}: NetlifyOAuthWrapperProps) => {
+  const [provider, setProvider] = useState(allProviders[0])
   const netlifyService = useMemo(() => (apiId ? NetlifyService.getInstance(apiId) : null), [apiId])
   const [userProfile, setUserProfile] = useState<null | undefined | GithubUserProfile>(undefined)
   const githubService = useMemo(() => new GithubService(), [])
@@ -34,6 +44,7 @@ export const NetlifyLoginWrapper = ({
 
   const handleLoginClick = useCallback(async () => {
     if (!netlifyService) return
+
     try {
       const token = await netlifyService.auth(provider)
       githubService.storage.setToken(token)
@@ -58,26 +69,23 @@ export const NetlifyLoginWrapper = ({
             flexDirection: 'column',
           }}
         >
-          <div>
-            {[
-              NetlifyOAuthProvider.github,
-              NetlifyOAuthProvider.gitlab,
-              NetlifyOAuthProvider.bitbucket,
-            ].map((currentProvider) => (
-              <div key={currentProvider}>
-                <input
-                  type="radio"
-                  name="provider"
-                  id={currentProvider}
-                  value={currentProvider}
-                  checked={provider === currentProvider}
-                  onChange={() => setProvider(currentProvider)}
-                />
-                <label htmlFor={currentProvider}>{currentProvider}</label>
-              </div>
-            ))}
+          <div style={{ margin: '10px' }}>
+            {acceptedProviders?.length > 1 &&
+              acceptedProviders.map((currentProvider) => (
+                <div key={currentProvider}>
+                  <input
+                    type="radio"
+                    name="provider"
+                    id={currentProvider}
+                    value={currentProvider}
+                    checked={provider === currentProvider}
+                    onChange={() => setProvider(currentProvider)}
+                  />
+                  <label htmlFor={currentProvider}>{currentProvider}</label>
+                </div>
+              ))}
           </div>
-          <button onClick={handleLoginClick}>Sign In Here!</button>
+          <button onClick={handleLoginClick}>Sign In!</button>
         </div>
       </Route>
       <Route path="*">
@@ -88,3 +96,5 @@ export const NetlifyLoginWrapper = ({
     <>{children}</>
   )
 }
+
+export default NetlifyOAuthWrapper
