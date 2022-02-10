@@ -19,6 +19,7 @@ const NetlifyOAuthWrapper = ({
   const [provider, setProvider] = useState(allProviders[0])
   const netlifyService = useMemo(() => (apiId ? NetlifyService.getInstance(apiId) : null), [apiId])
   const [userProfile, setUserProfile] = useState<null | undefined | UserProfile>(undefined)
+  // TODO: probably it is better to merge those services
   const githubService = useMemo(() => new GithubService(), [])
   const gitlabService = useMemo(() => new GitlabService(), [])
 
@@ -26,19 +27,26 @@ const NetlifyOAuthWrapper = ({
     (error?: unknown) => {
       if (error) console.error(error)
       githubService.storage.removeStoredToken()
+      gitlabService.storage.removeStoredToken()
       setUserProfile(null)
     },
-    [githubService.storage],
+    [githubService.storage, gitlabService.storage],
   )
 
   useEffect(() => {
-    if (githubService.storage.isStoredTokenValid() && netlifyService) {
-      // TODO: insert login handler before setting profile
-      githubService.getUserProfile().then(setUserProfile).catch(resetProfile)
+    if (netlifyService) {
+      if (githubService.storage.isStoredTokenValid()) {
+        // TODO: insert login handler before setting profile
+        githubService.getUserProfile().then(setUserProfile).catch(resetProfile)
+      } else if (gitlabService.storage.isStoredTokenValid()) {
+        gitlabService.getUserProfile().then(setUserProfile).catch(resetProfile)
+      } else {
+        resetProfile()
+      }
     } else {
       resetProfile()
     }
-  }, [githubService, netlifyService, resetProfile])
+  }, [githubService, gitlabService, netlifyService, resetProfile])
 
   const handleLoginClick = useCallback(async () => {
     if (!netlifyService) return
@@ -55,7 +63,6 @@ const NetlifyOAuthWrapper = ({
         case NetlifyOAuthProvider.gitlab:
           gitlabService.storage.setToken(token)
           newProfile = await gitlabService.getUserProfile()
-          console.log(token)
           break
         case NetlifyOAuthProvider.bitbucket:
           console.log(token)
