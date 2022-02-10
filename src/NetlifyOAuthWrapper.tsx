@@ -30,22 +30,34 @@ const NetlifyOAuthWrapper = ({
   )
 
   useEffect(() => {
-    if (githubService.storage.isStoredTokenValid() && apiId) {
+    if (githubService.storage.isStoredTokenValid() && netlifyService) {
       // TODO: insert login handler before setting profile
       githubService.getUserProfile().then(setUserProfile).catch(resetProfile)
     } else {
       resetProfile()
     }
-  }, [apiId, githubService, resetProfile])
+  }, [githubService, netlifyService, resetProfile])
 
   const handleLoginClick = useCallback(async () => {
     if (!netlifyService) return
 
     try {
       const token = await netlifyService.auth(provider)
-      githubService.storage.setToken(token)
+      let newProfile
 
-      const newProfile = await githubService.getUserProfile()
+      switch (provider) {
+        case NetlifyOAuthProvider.github:
+          githubService.storage.setToken(token)
+          newProfile = await githubService.getUserProfile()
+          break
+        case NetlifyOAuthProvider.gitlab:
+          console.log(token)
+          break
+        case NetlifyOAuthProvider.bitbucket:
+          console.log(token)
+          break
+      }
+
       await handleLogin(provider, newProfile)
       setUserProfile(newProfile)
     } catch (err) {
