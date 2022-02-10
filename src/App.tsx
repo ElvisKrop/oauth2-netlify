@@ -12,7 +12,11 @@ const App = () => {
 
   return (
     <Router>
-      <NetlifyOAuthWrapper handleLogin={handleLogin} apiId={process.env?.REACT_APP_NETLIFY_API_ID}>
+      <NetlifyOAuthWrapper
+        handleLogin={handleLogin}
+        acceptedProviders={[NetlifyOAuthProvider.github, NetlifyOAuthProvider.gitlab]}
+        apiId={process.env?.REACT_APP_NETLIFY_API_ID}
+      >
         <Route exact path="/home">
           <h1>Root Page</h1>
           <Link to="/secondary">go to secondary page</Link>
