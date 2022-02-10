@@ -4,4 +4,5 @@ export const allProviders = [
   NetlifyOAuthProvider.github,
   NetlifyOAuthProvider.gitlab,
   NetlifyOAuthProvider.bitbucket,
+  NetlifyOAuthProvider.email,
 ]
