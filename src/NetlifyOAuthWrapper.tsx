@@ -3,21 +3,29 @@ import { GithubService, GithubUserProfile } from './services/github.service'
 import { Redirect, Route } from 'react-router-dom'
 import { NetlifyOAuthProvider, NetlifyService } from './services/netlify.service'
 
+// eslint-disable-next-line
+export type UserProfile = GithubUserProfile | any
+
 const allProviders = [
   NetlifyOAuthProvider.github,
   NetlifyOAuthProvider.gitlab,
   NetlifyOAuthProvider.bitbucket,
 ]
 
+const defaultLoginHandler = (_: NetlifyOAuthProvider, userProfile: UserProfile) =>
+  new Promise<void>((resolve, reject) => (userProfile ? resolve() : reject('No profile')))
+
 interface NetlifyOAuthWrapperProps {
   apiId?: string
   acceptedProviders?: NetlifyOAuthProvider[]
+  handleLogin?: (provider: NetlifyOAuthProvider, userProfile: UserProfile) => Promise<void>
   children: ReactNode | ReactNode[]
 }
 
 const NetlifyOAuthWrapper = ({
   apiId,
   acceptedProviders = allProviders,
+  handleLogin = defaultLoginHandler,
   children,
 }: NetlifyOAuthWrapperProps) => {
   const [provider, setProvider] = useState(allProviders[0])
@@ -36,6 +44,7 @@ const NetlifyOAuthWrapper = ({
 
   useEffect(() => {
     if (githubService.storage.isStoredTokenValid() && apiId) {
+      // TODO: insert login handler before setting profile
       githubService.getUserProfile().then(setUserProfile).catch(resetProfile)
     } else {
       resetProfile()
@@ -50,11 +59,12 @@ const NetlifyOAuthWrapper = ({
       githubService.storage.setToken(token)
 
       const newProfile = await githubService.getUserProfile()
+      await handleLogin(provider, newProfile)
       setUserProfile(newProfile)
     } catch (err) {
       resetProfile(err)
     }
-  }, [netlifyService, provider, githubService, resetProfile])
+  }, [netlifyService, provider, githubService, resetProfile, handleLogin])
 
   return userProfile === null && apiId ? (
     <>
