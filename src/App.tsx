@@ -1,7 +1,8 @@
 import React, { useCallback } from 'react'
 import { BrowserRouter as Router, Link, Redirect, Route } from 'react-router-dom'
-import NetlifyOAuthWrapper, { UserProfile } from './NetlifyOAuthWrapper'
-import { NetlifyOAuthProvider } from './services/netlify.service'
+import NetlifyOAuthWrapper from './NetlifyOAuthWrapper'
+import { NetlifyOAuthProvider } from './enums'
+import { UserProfile } from './types'
 
 const App = () => {
   const handleLogin = useCallback(async (provider: NetlifyOAuthProvider, profile: UserProfile) => {

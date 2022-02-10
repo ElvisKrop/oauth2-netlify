@@ -1,20 +1,7 @@
 import { HttpService } from './http.service'
 import { LocalStorageService } from './local-storage.service'
+import { GithubStorageData, GithubUserProfile } from '../types'
 import pkg from '../../package.json'
-
-interface GithubStorageData {
-  token: string
-  version: string
-}
-
-export interface GithubUserProfile {
-  login: string
-  id: number
-  node_id: string
-  avatar_url: string
-  name: string
-  location: string
-}
 
 const validateGithubStorageData = (data: GithubStorageData) =>
   Boolean(data.token) && !!data.version && data.version === pkg.version

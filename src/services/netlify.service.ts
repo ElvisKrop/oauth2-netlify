@@ -1,15 +1,6 @@
 import netlify from 'netlify-auth-providers'
-
-export enum NetlifyOAuthProvider {
-  github = 'github',
-  gitlab = 'gitlab',
-  bitbucket = 'bitbucket',
-}
-
-interface GithubOAuthResponse {
-  provider: NetlifyOAuthProvider
-  token: string
-}
+import { NetlifyOAuthProvider } from '../enums'
+import { NetlifyOAuthResponse } from '../types'
 
 export class NetlifyService extends netlify {
   private static instances: Record<string, NetlifyService> = {}
@@ -27,7 +18,7 @@ export class NetlifyService extends netlify {
 
   auth = (provider: NetlifyOAuthProvider, scope?: string): Promise<string> =>
     new Promise((resolve, reject) =>
-      this.authenticate({ provider, scope }, (error, data: GithubOAuthResponse) =>
+      this.authenticate({ provider, scope }, (error, data: NetlifyOAuthResponse) =>
         error ? reject(error) : resolve(data.token),
       ),
     )

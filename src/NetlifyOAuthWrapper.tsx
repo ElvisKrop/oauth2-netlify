@@ -1,26 +1,13 @@
-import React, { ReactNode, useCallback, useEffect, useMemo, useState } from 'react'
-import { GithubService, GithubUserProfile } from './services/github.service'
+import React, { useCallback, useEffect, useMemo, useState } from 'react'
+import { GithubService } from './services/github.service'
 import { Redirect, Route } from 'react-router-dom'
-import { NetlifyOAuthProvider, NetlifyService } from './services/netlify.service'
-
-// eslint-disable-next-line
-export type UserProfile = GithubUserProfile | any
-
-const allProviders = [
-  NetlifyOAuthProvider.github,
-  NetlifyOAuthProvider.gitlab,
-  NetlifyOAuthProvider.bitbucket,
-]
+import { NetlifyService } from './services/netlify.service'
+import { NetlifyOAuthProvider } from './enums'
+import { GithubUserProfile, NetlifyOAuthWrapperProps, UserProfile } from './types'
+import { allProviders } from './constants'
 
 const defaultLoginHandler = (_: NetlifyOAuthProvider, userProfile: UserProfile) =>
   new Promise<void>((resolve, reject) => (userProfile ? resolve() : reject('No profile')))
-
-interface NetlifyOAuthWrapperProps {
-  apiId?: string
-  acceptedProviders?: NetlifyOAuthProvider[]
-  handleLogin?: (provider: NetlifyOAuthProvider, userProfile: UserProfile) => Promise<void>
-  children: ReactNode | ReactNode[]
-}
 
 const NetlifyOAuthWrapper = ({
   apiId,
