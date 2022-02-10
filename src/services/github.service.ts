@@ -1,20 +1,14 @@
 import { HttpService } from './http.service'
 import { LocalStorageService } from './local-storage.service'
-import { GithubStorageData, GithubUserProfile } from '../types'
-import pkg from '../../package.json'
+import { OAuthStorageData, GithubUserProfile } from '../types'
+import { encodeOAuthStorageData, validateOAuthStorageData } from '../utils'
 
-const validateGithubStorageData = (data: GithubStorageData) =>
-  Boolean(data.token) && !!data.version && data.version === pkg.version
-
-class GithubLSService extends LocalStorageService<GithubStorageData> {
+class GithubLSService extends LocalStorageService<OAuthStorageData> {
   private static LOCAL_STORAGE_KEY = 'GHT'
 
   constructor() {
-    super(GithubLSService.LOCAL_STORAGE_KEY, validateGithubStorageData, GithubLSService.encode)
+    super(GithubLSService.LOCAL_STORAGE_KEY, validateOAuthStorageData, encodeOAuthStorageData)
   }
-
-  private static encode = (data: Partial<GithubStorageData>) =>
-    JSON.stringify({ version: pkg.version, ...data })
 
   getToken = (): string => this.getItem().token
 
