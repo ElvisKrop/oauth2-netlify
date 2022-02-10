@@ -5,8 +5,9 @@ import { NetlifyOAuthProvider } from './enums'
 import { UserProfile } from './types'
 
 const App = () => {
-  const handleLogin = useCallback(async (provider: NetlifyOAuthProvider, profile: UserProfile) => {
+  const handleLogin = useCallback((provider: NetlifyOAuthProvider, profile: UserProfile) => {
     console.log(provider, profile)
+    return Promise.resolve()
   }, [])
 
   return (

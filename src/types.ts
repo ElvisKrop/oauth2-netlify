@@ -11,10 +11,44 @@ export interface OAuthStorageData {
   version: string
 }
 
-// TODO: list all available properties
 export interface GitlabUserProfile {
-  // eslint-disable-next-line
-  [key: string]: any
+  avatar_url: string
+  bio: string
+  bot: boolean
+  can_create_group: boolean
+  can_create_project: boolean
+  color_scheme_id: number
+  commit_email: string
+  confirmed_at: string
+  created_at: string
+  current_sign_in_at: string
+  email: string
+  external: boolean
+  followers: number
+  following: number
+  id: number
+  identities?: {
+    extern_uid: string
+    provider: string
+    saml_provider_id: string
+  }[]
+  job_title: string
+  last_activity_on: string
+  last_sign_in_at: string
+  linkedin: string
+  local_time: string
+  name: string
+  private_profile: boolean
+  projects_limit: number
+  public_email: string
+  skype: string
+  state: string
+  theme_id: number
+  twitter: string
+  two_factor_enabled: boolean
+  username: string
+  web_url: string
+  website_url: string
 }
 
 export interface GithubUserProfile {
