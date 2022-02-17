@@ -7,7 +7,14 @@ import { UserProfile } from './types'
 const App = () => {
   const handleLogin = useCallback((provider: NetlifyOAuthProvider, profile: UserProfile) => {
     console.log(provider, profile)
-    return Promise.resolve()
+    switch (provider) {
+      case NetlifyOAuthProvider.github:
+        return profile.login.toLowerCase() === 'elviskrop' ? Promise.resolve() : Promise.reject()
+      case NetlifyOAuthProvider.gitlab:
+        return profile.username.toLowerCase() === 'n.zasimuk' ? Promise.resolve() : Promise.reject()
+      default:
+        return Promise.reject()
+    }
   }, [])
 
   return (
