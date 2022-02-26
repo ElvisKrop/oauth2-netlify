@@ -82,8 +82,11 @@ export interface GithubUserProfile {
   url: string
 }
 
-// eslint-disable-next-line
-export type UserProfile = GithubUserProfile | GitlabUserProfile
+export interface BitbucketUserProfile {
+  login: string
+}
+
+export type UserProfile = GithubUserProfile | GitlabUserProfile | BitbucketUserProfile
 
 export interface NetlifyOAuthWrapperProps {
   apiId?: string

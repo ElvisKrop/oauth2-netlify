@@ -24,6 +24,7 @@ const App = () => {
           ? Promise.resolve()
           : Promise.reject('Not allowed user')
       case NetlifyOAuthProvider.bitbucket:
+        return Promise.resolve()
       default:
         return Promise.reject('Not allowed user')
     }
