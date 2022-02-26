@@ -6,6 +6,7 @@ import { NetlifyOAuthProvider } from './enums'
 import { NetlifyOAuthWrapperProps, UserProfile } from './types'
 import { allProviders } from './constants'
 import { GitlabService } from './services/gitlab.service'
+import { BitbucketService } from './services/bitbucket.service'
 
 const defaultLoginHandler = (_: NetlifyOAuthProvider, userProfile: UserProfile) =>
   new Promise<void>((resolve, reject) => (userProfile ? resolve() : reject('No profile')))
@@ -22,15 +23,17 @@ const NetlifyOAuthWrapper = ({
   // TODO: probably it is better to merge those services
   const githubService = useMemo(() => new GithubService(), [])
   const gitlabService = useMemo(() => new GitlabService(), [])
+  const bitbucketService = useMemo(() => new BitbucketService(), [])
 
   const resetProfile = useCallback(
     (error?: unknown) => {
       if (error) console.error(error)
       githubService.storage.removeStoredToken()
       gitlabService.storage.removeStoredToken()
+      bitbucketService.storage.removeStoredToken()
       setUserProfile(null)
     },
-    [githubService.storage, gitlabService.storage],
+    [bitbucketService.storage, githubService.storage, gitlabService.storage],
   )
 
   useEffect(() => {
@@ -40,13 +43,15 @@ const NetlifyOAuthWrapper = ({
         githubService.getUserProfile().then(setUserProfile).catch(resetProfile)
       } else if (gitlabService.storage.isStoredTokenValid()) {
         gitlabService.getUserProfile().then(setUserProfile).catch(resetProfile)
+      } else if (bitbucketService.storage.isStoredTokenValid()) {
+        bitbucketService.getUserProfile().then(setUserProfile).catch(resetProfile)
       } else {
         resetProfile()
       }
     } else {
       resetProfile()
     }
-  }, [githubService, gitlabService, netlifyService, resetProfile])
+  }, [bitbucketService, githubService, gitlabService, netlifyService, resetProfile])
 
   const handleLoginClick = useCallback(async () => {
     if (!netlifyService) return
@@ -65,8 +70,10 @@ const NetlifyOAuthWrapper = ({
           newProfile = await gitlabService.getUserProfile()
           break
         case NetlifyOAuthProvider.bitbucket:
+          bitbucketService.storage.setToken(token)
+          newProfile = await bitbucketService.getUserProfile()
+          break
         default:
-          console.log(token)
           throw new Error(`Unknown provider ${provider}`)
       }
 
@@ -75,7 +82,15 @@ const NetlifyOAuthWrapper = ({
     } catch (err) {
       resetProfile(err)
     }
-  }, [netlifyService, provider, handleLogin, githubService, gitlabService, resetProfile])
+  }, [
+    netlifyService,
+    provider,
+    handleLogin,
+    githubService,
+    gitlabService,
+    bitbucketService,
+    resetProfile,
+  ])
 
   return userProfile === null && apiId ? (
     <>
