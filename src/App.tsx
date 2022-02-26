@@ -8,7 +8,7 @@ import { allProviders } from './constants'
 enum OwnerUsername {
   github = 'elviskrop',
   gitlab = 'n.zasimuk',
-  bitbucket = '',
+  bitbucket = 'n_zasimuk',
 }
 
 const App = () => {
@@ -24,7 +24,9 @@ const App = () => {
           ? Promise.resolve()
           : Promise.reject('Not allowed user')
       case NetlifyOAuthProvider.bitbucket:
-        return Promise.resolve()
+        return 'username' in profile && profile.username.toLowerCase() === OwnerUsername.bitbucket
+          ? Promise.resolve()
+          : Promise.reject('Not allowed user')
       default:
         return Promise.reject('Not allowed user')
     }

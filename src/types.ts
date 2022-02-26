@@ -83,7 +83,20 @@ export interface GithubUserProfile {
 }
 
 export interface BitbucketUserProfile {
-  login: string
+  account_id: string
+  account_status: string
+  created_on: string
+  display_name: string
+  is_staff: boolean
+  links: Record<
+    'avatar' | 'hooks' | 'html' | 'repositories' | 'self' | 'snippets',
+    { href: string }
+  >
+  location: string
+  nickname: string
+  type: string
+  username: string
+  uuid: string
 }
 
 export type UserProfile = GithubUserProfile | GitlabUserProfile | BitbucketUserProfile
