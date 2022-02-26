@@ -4,6 +4,8 @@ import { NetlifyOAuthProvider } from './enums'
 export interface NetlifyOAuthResponse {
   provider: NetlifyOAuthProvider
   token: string
+  // for bitbucket and gitlab only
+  refresh_token?: string
 }
 
 export interface OAuthStorageData {

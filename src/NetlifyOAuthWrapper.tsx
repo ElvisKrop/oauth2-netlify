@@ -18,7 +18,7 @@ const NetlifyOAuthWrapper = ({
   children,
 }: NetlifyOAuthWrapperProps) => {
   const [provider, setProvider] = useState(allProviders[0])
-  const netlifyService = useMemo(() => (apiId ? NetlifyService.getInstance(apiId) : null), [apiId])
+  const netlifyService = useMemo(() => new NetlifyService(apiId), [apiId])
   const [userProfile, setUserProfile] = useState<null | undefined | UserProfile>(undefined)
   // TODO: probably it is better to merge those services
   const githubService = useMemo(() => new GithubService(), [])
@@ -92,7 +92,7 @@ const NetlifyOAuthWrapper = ({
     resetProfile,
   ])
 
-  return userProfile === null && apiId ? (
+  return !userProfile ? (
     <>
       <Route exact path="/login">
         <div
