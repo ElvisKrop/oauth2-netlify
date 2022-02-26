@@ -34,10 +34,23 @@ const PROVIDERS: Record<NetlifyOAuthProvider, WindowParams> = {
   // },
 }
 
-class Authenticator {
+class Netlify {
   private authWindow?: WindowProxy | null
 
-  constructor(private siteId?: string, private baseUrl: string = NETLIFY_API) {}
+  readonly #siteId?: string
+
+  constructor(siteId?: string, private readonly baseUrl: string = NETLIFY_API) {
+    this.#siteId = siteId
+  }
+
+  get siteId() {
+    if (this.#siteId) {
+      return this.#siteId
+    }
+
+    const host = document.location.host.split(':')[0]
+    return host === 'localhost' ? null : host
+  }
 
   handshakeCallback(
     options: { provider: NetlifyOAuthProvider },
@@ -82,14 +95,6 @@ class Authenticator {
     return fn
   }
 
-  getSiteID() {
-    if (this.siteId) {
-      return this.siteId
-    }
-    const host = document.location.host.split(':')[0]
-    return host === 'localhost' ? null : host
-  }
-
   authenticate(
     options: {
       provider: NetlifyOAuthProvider
@@ -101,12 +106,12 @@ class Authenticator {
     cb: (error: NetlifyError | null, data?: NetlifyOAuthResponse) => void,
   ) {
     let url
-    const siteID = this.getSiteID()
+    const siteID = this.siteId
     const { provider } = options
     if (!provider) {
       return cb(
         new NetlifyError({
-          message: 'You must specify a provider when calling netlify.authenticate',
+          message: 'You must specify a provider when calling Netlify.authenticate',
         }),
       )
     }
@@ -114,7 +119,7 @@ class Authenticator {
       return cb(
         new NetlifyError({
           message:
-            'You must set a site_id with new netlify({site_id: "your-site-id"}) to make authentication work from localhost',
+            'You must set a siteId with new Netlify("your-site-id") to make authentication work from localhost',
         }),
       )
     }
@@ -124,7 +129,6 @@ class Authenticator {
     const top = screen.height / 2 - conf.height / 2
     window.addEventListener('message', this.handshakeCallback(options, cb), false)
     url = this.baseUrl + '/auth?provider=' + options.provider + '&site_id=' + siteID
-    console.log({ siteID })
     if (options.scope) {
       url += '&scope=' + options.scope
     }
@@ -155,11 +159,10 @@ class Authenticator {
   }
 }
 
-export class NetlifyService extends Authenticator {
+export class NetlifyService extends Netlify {
   auth = (provider: NetlifyOAuthProvider, scope?: string): Promise<string> =>
     new Promise((resolve, reject) =>
       this.authenticate({ provider, scope }, (error, data) => {
-        console.log({ error, data })
         if (error || !data) reject(error)
         else resolve(data.token)
       }),
