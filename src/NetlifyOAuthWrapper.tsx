@@ -65,8 +65,9 @@ const NetlifyOAuthWrapper = ({
           newProfile = await gitlabService.getUserProfile()
           break
         case NetlifyOAuthProvider.bitbucket:
+        default:
           console.log(token)
-          break
+          throw new Error(`Unknown provider ${provider}`)
       }
 
       await handleLogin(provider, newProfile)

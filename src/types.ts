@@ -83,7 +83,7 @@ export interface GithubUserProfile {
 }
 
 // eslint-disable-next-line
-export type UserProfile = GithubUserProfile | GitlabUserProfile | any
+export type UserProfile = GithubUserProfile | GitlabUserProfile
 
 export interface NetlifyOAuthWrapperProps {
   apiId?: string

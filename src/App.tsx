@@ -3,17 +3,29 @@ import { BrowserRouter as Router, Link, Redirect, Route } from 'react-router-dom
 import NetlifyOAuthWrapper from './NetlifyOAuthWrapper'
 import { NetlifyOAuthProvider } from './enums'
 import { UserProfile } from './types'
+import { allProviders } from './constants'
+
+enum OwnerUsername {
+  github = 'elviskrop',
+  gitlab = 'n.zasimuk',
+  bitbucket = '',
+}
 
 const App = () => {
   const handleLogin = useCallback((provider: NetlifyOAuthProvider, profile: UserProfile) => {
     console.log(provider, profile)
     switch (provider) {
       case NetlifyOAuthProvider.github:
-        return profile.login.toLowerCase() === 'elviskrop' ? Promise.resolve() : Promise.reject()
+        return 'login' in profile && profile.login.toLowerCase() === OwnerUsername.github
+          ? Promise.resolve()
+          : Promise.reject('Not allowed user')
       case NetlifyOAuthProvider.gitlab:
-        return profile.username.toLowerCase() === 'n.zasimuk' ? Promise.resolve() : Promise.reject()
+        return 'username' in profile && profile.username.toLowerCase() === OwnerUsername.gitlab
+          ? Promise.resolve()
+          : Promise.reject('Not allowed user')
+      case NetlifyOAuthProvider.bitbucket:
       default:
-        return Promise.reject()
+        return Promise.reject('Not allowed user')
     }
   }, [])
 
@@ -21,7 +33,7 @@ const App = () => {
     <Router>
       <NetlifyOAuthWrapper
         handleLogin={handleLogin}
-        acceptedProviders={[NetlifyOAuthProvider.github, NetlifyOAuthProvider.gitlab]}
+        acceptedProviders={allProviders}
         apiId={process.env?.REACT_APP_NETLIFY_API_ID}
       >
         <Route exact path="/home">
