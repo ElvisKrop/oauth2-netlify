@@ -11,6 +11,13 @@ enum OwnerUsername {
   bitbucket = 'n_zasimuk',
 }
 
+const allowedUsernames: Record<NetlifyOAuthProvider, string[]> = {
+  github: [OwnerUsername.github],
+  gitlab: [OwnerUsername.gitlab],
+  bitbucket: [OwnerUsername.bitbucket],
+  email: [],
+}
+
 const App = () => {
   const acceptedProviders = (process.env?.REACT_APP_ACCEPTED_PROVIDERS?.trim()
     ?.toLowerCase()
@@ -20,22 +27,39 @@ const App = () => {
 
   const handleLogin = useCallback((provider: NetlifyOAuthProvider, profile: UserProfile) => {
     console.log(provider, profile)
-    switch (provider) {
-      case NetlifyOAuthProvider.github:
-        return 'login' in profile && profile.login.toLowerCase() === OwnerUsername.github
-          ? Promise.resolve()
-          : Promise.reject('Not allowed user')
-      case NetlifyOAuthProvider.gitlab:
-        return 'username' in profile && profile.username.toLowerCase() === OwnerUsername.gitlab
-          ? Promise.resolve()
-          : Promise.reject('Not allowed user')
-      case NetlifyOAuthProvider.bitbucket:
-        return 'username' in profile && profile.username.toLowerCase() === OwnerUsername.bitbucket
-          ? Promise.resolve()
-          : Promise.reject('Not allowed user')
-      default:
-        return Promise.reject('Not allowed user')
-    }
+    return new Promise<void>((resolve, reject) => {
+      switch (provider) {
+        case NetlifyOAuthProvider.github:
+          if ('login' in profile && allowedUsernames.github.includes(profile.login.toLowerCase())) {
+            resolve()
+          }
+          break
+        case NetlifyOAuthProvider.gitlab:
+          if (
+            'username' in profile &&
+            allowedUsernames.gitlab.includes(profile.username.toLowerCase())
+          ) {
+            resolve()
+          }
+          break
+        case NetlifyOAuthProvider.bitbucket:
+          if (
+            'username' in profile &&
+            allowedUsernames.bitbucket.includes(profile.username.toLowerCase())
+          ) {
+            resolve()
+          }
+          break
+        case NetlifyOAuthProvider.email:
+          // TODO: validate email auth
+          resolve()
+          break
+        default:
+          reject('Not allowed user')
+      }
+
+      reject('Not allowed user')
+    })
   }, [])
 
   return (
