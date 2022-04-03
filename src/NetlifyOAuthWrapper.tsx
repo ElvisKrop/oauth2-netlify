@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useMemo, useState } from 'react'
+import React, { CSSProperties, useCallback, useEffect, useMemo, useState } from 'react'
 import { GithubService } from './services/github.service'
 import { Redirect, Route } from 'react-router-dom'
 import { NetlifyService } from './services/netlify.service'
@@ -7,6 +7,18 @@ import { NetlifyOAuthWrapperProps, UserProfile } from './types'
 import { allProviders } from './constants'
 import { GitlabService } from './services/gitlab.service'
 import { BitbucketService } from './services/bitbucket.service'
+
+const styles: Record<string, CSSProperties> = {
+  container: {
+    minHeight: '100vh',
+    width: '100%',
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+    flexDirection: 'column',
+  },
+  radioButtons: { margin: '10px' },
+}
 
 const defaultLoginHandler = (_: NetlifyOAuthProvider, userProfile: UserProfile) =>
   new Promise<void>((resolve, reject) => (userProfile ? resolve() : reject('No profile')))
@@ -95,17 +107,8 @@ const NetlifyOAuthWrapper = ({
   return !userProfile ? (
     <>
       <Route exact path="/login">
-        <div
-          style={{
-            minHeight: '100vh',
-            width: '100%',
-            display: 'flex',
-            justifyContent: 'center',
-            alignItems: 'center',
-            flexDirection: 'column',
-          }}
-        >
-          <div style={{ margin: '10px' }}>
+        <div style={styles.container}>
+          <div style={styles.radioButtons}>
             {acceptedProviders?.length > 1 &&
               acceptedProviders.map((currentProvider) => (
                 <div key={currentProvider}>
