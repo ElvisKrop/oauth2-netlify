@@ -57,7 +57,7 @@ const NetlifyOAuthWrapper = ({
     if (!netlifyService) return
 
     try {
-      const token = await netlifyService.auth(provider)
+      const token = await netlifyService.getAuthToken({ provider })
       let newProfile
 
       switch (provider) {
