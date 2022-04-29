@@ -23,6 +23,12 @@ const styles: Record<string, CSSProperties> = {
 const defaultLoginHandler = (_: NetlifyOAuthProvider, userProfile: UserProfile) =>
   new Promise<void>((resolve, reject) => (userProfile ? resolve() : reject('No profile')))
 
+/**
+ * @param apiId
+ * @param acceptedProviders
+ * @param handleLogin
+ * @param children
+ */
 const NetlifyOAuthWrapper = ({
   apiId,
   acceptedProviders = allProviders,
